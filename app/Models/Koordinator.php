@@ -9,4 +9,6 @@ class Koordinator extends Model
 {
     protected $table = 'koordinator';
     public $timestamps = false;
+
+    
 }

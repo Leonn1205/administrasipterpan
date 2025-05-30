@@ -19,7 +19,6 @@ class Kelompok extends Model
         'nim2'
     ];
 
-    // Relasi ke dosen pembimbing
     public function dosen()
     {
         return $this->belongsTo(Dosen::class, 'id_dosen', 'id_dosen');

@@ -188,8 +188,8 @@
 <body>
     <div class="sidebar">
         <div class="menu-title">Menu</div>
-        <a href="#" class="active">Beranda</a>
-        <a href="#">Logbook</a>
+        <a href="/mahasiswa/dashboard" class="{{ request()->is('mahasiswa/dashboard') ? 'active' : '' }}">Beranda</a>
+        <a href="/mahasiswa/logbook" class="{{ request()->is('mahasiswa/logbook') ? 'active' : '' }}">Logbook</a>
         <a href="#">Tugas</a>
         <a href="#">Nilai</a>
     </div>
@@ -219,14 +219,26 @@
                     <tr>
                         <td>{{ $item->mahasiswa1->nim ?? '-' }}</td>
                         <td>{{ $item->mahasiswa1->nama_mhs ?? '-' }}</td>
-                        <td>{{ ucfirst($item->mahasiswa1->status_mengulang ?? '-') }}</td>
-                        <td>{{ $item->dosen->nama ?? '-' }}</td>
+                        <td>
+                            @if (($item->mahasiswa1->status_mengulang ?? '') === 'tidak_mengulang')
+                                Tidak Mengulang
+                            @else
+                                Mengulang
+                            @endif
+                        </td>
+                        <td>{{ $item->dosen->nama_dosen ?? '-' }}</td>
                     </tr>
                     <tr>
                         <td>{{ $item->mahasiswa2->nim ?? '-' }}</td>
                         <td>{{ $item->mahasiswa2->nama_mhs ?? '-' }}</td>
-                        <td>{{ ucfirst($item->mahasiswa2->status_mengulang ?? '-') }}</td>
-                        <td>{{ $item->dosen->nama ?? '-' }}</td>
+                        <td>
+                            @if (($item->mahasiswa2->status_mengulang ?? '') === 'tidak_mengulang')
+                                Tidak Mengulang
+                            @else
+                                Mengulang
+                            @endif
+                        </td>
+                        <td>{{ $item->dosen->nama_dosen ?? '-' }}</td>
                     </tr>
                 @empty
                     <tr>

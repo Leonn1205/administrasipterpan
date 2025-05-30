@@ -19,13 +19,13 @@ class MahasiswaController extends Controller
     }
 
     public function storeKelompok(Request $request)
-        {
-            $request->validate([
+    {
+        $request->validate([
             'nim1' => 'required',
             'nama1' => 'required',
             'nim2' => 'required|different:nim1',
             'nama2' => 'required',
-            ], [
+        ], [
             'nim2.different' => 'NIM Mahasiswa 1 dan NIM Mahasiswa 2 tidak boleh sama.',
         ]);
 
@@ -36,6 +36,17 @@ class MahasiswaController extends Controller
             return back()->with('error', 'Salah satu atau kedua NIM tidak ditemukan di database mahasiswa!')->withInput();
         }
 
+        // Cek apakah nim1 atau nim2 sudah pernah menjadi anggota kelompok manapun
+        $sudahAda = Kelompok::where('nim1', $request->nim1)
+            ->orWhere('nim2', $request->nim1)
+            ->orWhere('nim1', $request->nim2)
+            ->orWhere('nim2', $request->nim2)
+            ->exists();
+
+        if ($sudahAda) {
+            return back()->with('error', 'Salah satu atau kedua NIM sudah terdaftar di kelompok lain!')->withInput();
+        }
+
         Kelompok::create([
             'id_dosen' => null,
             'nim1' => $request->nim1,
@@ -44,10 +55,5 @@ class MahasiswaController extends Controller
 
         return redirect('/mahasiswa/dashboard')->with('success', 'Kelompok berhasil dibuat!');
     }
-
-    public function logout(Request $request)
-    {
-        $request->session()->flush();
-        return redirect('/');
-    }
+    
 }
