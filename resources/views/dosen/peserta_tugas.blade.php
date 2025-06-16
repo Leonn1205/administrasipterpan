@@ -3,16 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <title>Daftar Peserta Tugas</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .form-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .form-container h3 {
+            margin-bottom: 20px;
+        }
+
+        .form-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .form-container input[type="number"],
+        .form-container input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-container button {
+            padding: 10px 20px;
+            background-color: #3de6e1;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .form-container button:hover {
+            background-color: #ddd;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
 </head>
 <body>
+    <button class="back-button" onclick="window.location.href='{{ route('dosen.nilai') }}'">Back</button>
     <h2>Peserta Tugas: {{ $tugas->judul }}</h2>
-    <table border="1" cellpadding="8" cellspacing="0">
+    <table>
         <thead>
             <tr>
                 <th>No.</th>
                 <th>Kelompok</th>
                 <th>File Tugas</th>
                 <th>Nilai</th>
+                <th>Bobot</th>
                 <th>Aksi</th>
             </tr>
         </thead>
@@ -21,9 +95,9 @@
                 <tr>
                     <td>{{ $loop->iteration }}</td>
                     <td>
-    {{ $klp->mahasiswa1->nama ?? $klp->nim1 }} &
-    {{ $klp->mahasiswa2->nama ?? $klp->nim2 }}
-</td>
+                        {{ $klp->mahasiswa1->nama ?? $klp->nim1 }} &
+                        {{ $klp->mahasiswa2->nama ?? $klp->nim2 }}
+                    </td>
                     <td>
                         @if($klp->pivot->file_tugas_mhs)
                             <a href="{{ asset('storage/' . $klp->pivot->file_tugas_mhs) }}" target="_blank">Download</a>
@@ -32,14 +106,52 @@
                         @endif
                     </td>
                     <td>{{ $klp->pivot->nilai ?? '-' }}</td>
+                    <td>{{ $klp->pivot->bobot ?? '-' }}</td>
                     <td>
-                        <a href="{{ route('dosen.tugas.nilai.form', [$tugas->id_tugas, $klp->pivot->id]) }}">Beri Nilai</a>
+                        <button onclick="showForm('{{ $klp->pivot->id }}', '{{ $klp->mahasiswa1->nama ?? $klp->nim1 }} & {{ $klp->mahasiswa2->nama ?? $klp->nim2 }}')">Beri Nilai</button>
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="5">Belum ada kelompok</td></tr>
+                <tr><td colspan="6">Belum ada yang mengumpulkan</td></tr>
             @endforelse
         </tbody>
     </table>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="hideForm()"></div>
+
+    <!-- Form Container -->
+    <div class="form-container" id="form-container">
+        <h3>Beri Nilai</h3>
+        <form method="POST" action="{{ route('dosen.tugas.nilai.update', $tugas->id_tugas) }}">
+    @csrf
+    <input type="hidden" name="id_kelompok" id="id_kelompok">
+    <label for="kelompok">Kelompok</label>
+    <input type="text" id="kelompok" readonly>
+
+    <label for="bobot">Bobot</label>
+    <input type="number" id="bobot" name="bobot" required>
+
+    <label for="nilai">Nilai</label>
+    <input type="number" id="nilai" name="nilai" required>
+
+    <button type="submit">Simpan</button>
+    <button type="button" onclick="hideForm()">Batal</button>
+</form>
+    </div>
+
+    <script>
+        function showForm(idKelompok, kelompok) {
+            document.getElementById('id_kelompok').value = idKelompok;
+            document.getElementById('kelompok').value = kelompok;
+            document.getElementById('form-container').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function hideForm() {
+            document.getElementById('form-container').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
 </body>
 </html>

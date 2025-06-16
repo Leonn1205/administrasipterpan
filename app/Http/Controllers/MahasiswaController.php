@@ -5,6 +5,7 @@ use App\Models\Kelompok;
 use App\Models\Mahasiswa;
 use App\Models\Tugas;
 use App\Models\Dosen;
+use App\Models\TugasKelompok;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -165,6 +166,7 @@ class MahasiswaController extends Controller
             ->where('id_tugas', $id_tugas)
             ->update([
                 'file_tugas_mhs' => $filePath,
+                'nim_pengumpul' => $mahasiswa->nim,
             ]);
 
         return redirect()->route('mahasiswa.tugas')->with('success', 'Tugas berhasil diupload.');
@@ -200,6 +202,24 @@ class MahasiswaController extends Controller
         }
 
         dd($request->all(), $mahasiswa, $kelompok, $tugas);
+    }
+
+    public function nilai()
+    {
+        $tugasKelompok = TugasKelompok::with('tugas')->where('nim_pengumpul', Auth::user()->mahasiswa->nim)->get();
+        $capaianMaksimal = TugasKelompok::avg('nilai');
+        $nilaiHuruf = $this->calculateHuruf($capaianMaksimal);
+
+        return view('mahasiswa.nilai', compact('tugasKelompok', 'capaianMaksimal', 'nilaiHuruf'));
+    }
+
+    private function calculateHuruf($nilai)
+    {
+        if ($nilai >= 85) return 'A';
+        if ($nilai >= 70) return 'B';
+        if ($nilai >= 60) return 'C';
+        if ($nilai >= 50) return 'D';
+        return 'E';
     }
 
 

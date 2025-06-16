@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Tugas;
+use App\Models\TugasKelompok;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -98,5 +99,56 @@ class TugasController extends Controller
         $tugas = Tugas::with('kelompok.mahasiswa1', 'kelompok.mahasiswa2')->findOrFail($id);
 
         return view('dosen.peserta_tugas', compact('tugas'));
+    }
+
+    public function updateNilai(Request $request, $id_tugas)
+    {
+        $request->validate([
+            'id_kelompok' => 'required|exists:tugas_kelompok,id',
+            'nilai' => 'required|numeric|min:0|max:100',
+            'bobot' => 'required|numeric|min:0|max:100',
+        ]);
+
+        // Cari data tugas kelompok berdasarkan ID
+        $tugasKelompok = TugasKelompok::findOrFail($request->id_kelompok);
+
+        // Hitung nilai huruf berdasarkan nilai angka
+        $nilaiAngka = $request->nilai;
+        if ($nilaiAngka >= 85) {
+            $nilaiHuruf = 'A';
+        } elseif ($nilaiAngka >= 70) {
+            $nilaiHuruf = 'B';
+        } elseif ($nilaiAngka >= 60) {
+            $nilaiHuruf = 'C';
+        } elseif ($nilaiAngka >= 50) {
+            $nilaiHuruf = 'D';
+        } else {
+            $nilaiHuruf = 'E';
+        }
+
+        // Update nilai untuk kelompok saat ini
+        $tugasKelompok->update([
+            'nilai' => $nilaiAngka,
+            'bobot' => $request->bobot,
+            'nilai_huruf' => $nilaiHuruf,
+        ]);
+
+        // Hitung rata-rata nilai semua kelompok untuk tugas ini
+        $rataRataNilai = TugasKelompok::where('id_tugas', $id_tugas)->avg('nilai');
+
+        // Update capaian maksimal di tabel tugas_kelompok
+        DB::table('tugas_kelompok')->where('id_tugas', $id_tugas)->update([
+            'capaian_maksimal' => $rataRataNilai,
+        ]);
+
+        return redirect()->route('dosen.tugas.peserta', $id_tugas)
+                        ->with('success', 'Nilai berhasil disimpan dan capaian maksimal diperbarui.');
+    }
+
+    public function detail($id)
+    {
+        $tugas = Tugas::findOrFail($id);
+
+        return view('dosen.detail_tugas', compact('tugas'));
     }
 }

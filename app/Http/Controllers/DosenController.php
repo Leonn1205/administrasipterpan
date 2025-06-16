@@ -105,7 +105,7 @@ class DosenController extends Controller
 
         $tugasKelompok = TugasKelompok::findOrFail($id);
 
-        // Hitung nilai huruf
+        // Hitung nilai huruf berdasarkan nilai angka
         $nilaiAngka = $request->nilai;
         if ($nilaiAngka >= 85) {
             $nilaiHuruf = 'A';
@@ -119,14 +119,23 @@ class DosenController extends Controller
             $nilaiHuruf = 'E';
         }
 
-        // Update nilai
+        // Update nilai untuk kelompok saat ini
         $tugasKelompok->update([
             'nilai' => $nilaiAngka,
             'bobot' => $request->bobot,
             'nilai_huruf' => $nilaiHuruf,
         ]);
 
+        // Hitung rata-rata nilai semua kelompok untuk tugas ini
+        $rataRataNilai = TugasKelompok::where('id_tugas', $tugasKelompok->id_tugas)
+            ->avg('nilai');
+
+        // Update capaian maksimal di tabel tugas
+        DB::table('tugas')->where('id', $tugasKelompok->id_tugas)->update([
+            'capaian_maksimal' => $rataRataNilai,
+        ]);
+
         return redirect()->route('dosen.detail-tugas', $tugasKelompok->id_tugas)
-                        ->with('success', 'Nilai berhasil disimpan.');
+                        ->with('success', 'Nilai berhasil disimpan dan capaian maksimal diperbarui.');
     }
 }

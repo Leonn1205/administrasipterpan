@@ -191,7 +191,7 @@
         <a href="/mahasiswa/dashboard" class="{{ request()->is('mahasiswa/dashboard') ? 'active' : '' }}">Beranda</a>
         <a href="/mahasiswa/logbook" class="{{ request()->is('mahasiswa/logbook') ? 'active' : '' }}">Logbook</a>
         <a href="/mahasiswa/tugas" class="{{ request()->is('mahasiswa/tugas') ? 'active' : '' }}">Tugas</a>
-        <a href="#">Nilai</a>
+        <a href="/mahasiswa/nilai" class="{{ request()->is('mahasiswa/tugas') ? 'active' : '' }}">Nilai</a>
     </div>
     <div class="main-content">
         <div class="topbar">

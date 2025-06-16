@@ -38,6 +38,7 @@ Route::middleware(['auth.session', 'mahasiswa'])->group(function () {
     Route::get('/mahasiswa/tugas/{id}/download', [MahasiswaController::class, 'downloadTugasDosen'])->name('mahasiswa.tugas.download');
     Route::get('/mahasiswa/tugas/{id}/upload', [MahasiswaController::class, 'uploadTugas'])->name('mahasiswa.tugas.upload');
     Route::post('/mahasiswa/tugas/{id}/upload', [MahasiswaController::class, 'uploadTugas'])->name('mahasiswa.tugas.upload');
+    Route::get('/mahasiswa/nilai', [MahasiswaController::class, 'nilai'])->name('mahasiswa.nilai');
 });
 
 
@@ -58,6 +59,10 @@ Route::middleware(['auth.session', 'dosen'])->group(function () {
     Route::get('/dosen/tugas/{id}/download/{id_klp}', [TugasController::class, 'download'])->name('dosen.tugas.download.mhs');
     Route::get('/dosen/tugas/{id}/nilai/{id_tugas_kelompok}/edit', [TugasController::class, 'formNilai'])->name('dosen.tugas.nilai.form');
     Route::post('/dosen/tugas/{id}/nilai/{id_tugas_kelompok}/simpan', [TugasController::class, 'simpanNilai'])->name('dosen.tugas.nilai.simpan');
+    Route::get('/dosen/nilai/input/{id}', [NilaiController::class, 'edit'])->name('dosen.nilai.edit');
+    Route::post('/dosen/nilai/update/{id}', [NilaiController::class, 'update'])->name('dosen.nilai.update');
+    Route::post('/dosen/tugas/{id_tugas}/nilai/update', [TugasController::class, 'updateNilai'])->name('dosen.tugas.nilai.update');
+    Route::get('/dosen/tugas/{id}/detail', [TugasController::class, 'detail'])->name('dosen.detail-tugas');
 });
 
 Route::get('/api/mahasiswa/{nim}', [MahasiswaController::class, 'getByNim']);
