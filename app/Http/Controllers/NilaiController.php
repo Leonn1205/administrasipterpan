@@ -3,42 +3,59 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Nilai;
-use App\Models\Tugas;
 use App\Models\TugasKelompok;
 
 class NilaiController extends Controller
 {
     public function index()
     {
-        $tugas = Tugas::with(['kelompok'])->get();
+        $tugas = \App\Models\Tugas::all();
+
         return view('dosen.nilai', compact('tugas'));
     }
 
+    // Form edit nilai
     public function edit($id)
     {
-        // Ambil data tugas kelompok berdasarkan ID
-        $tugasKelompok = TugasKelompok::findOrFail($id);
-
-        return view('dosen.input_nilai', compact('tugasKelompok'));
+        $tugasKelompok = TugasKelompok::with('tugas', 'kelompok.mahasiswa1', 'kelompok.mahasiswa2')->findOrFail($id);
+        return view('dosen.nilai.input_nilai', compact('tugasKelompok'));
     }
 
+    // Simpan/update nilai
     public function update(Request $request, $id)
     {
         $request->validate([
-            'bobot' => 'required|numeric',
-            'nilai' => 'required|numeric',
-            'capaian_maksimal' => 'required|numeric',
-            'nilai_huruf' => 'required|string|max:5',
+            'nilai' => 'required|numeric|min:0|max:100',
         ]);
 
-        // Update data di tabel tugas_kelompok
-        $tugasKelompok = TugasKelompok::findOrFail($id);
+        $tugasKelompok = TugasKelompok::with('tugas')->findOrFail($id);
+        $bobot = $tugasKelompok->tugas->bobot;
+
+        // Hitung nilai akhir berdasarkan bobot
+        $nilaiAngka = $request->nilai;
+        $nilaiAkhir = $nilaiAngka * ($bobot / 100);
+
+        // Konversi ke huruf
+        $nilaiHuruf = match (true) {
+            $nilaiAngka >= 85 => 'A',
+            $nilaiAngka >= 70 => 'B',
+            $nilaiAngka >= 60 => 'C',
+            $nilaiAngka >= 50 => 'D',
+            default => 'E',
+        };
+
+        // Update ke tabel tugas_kelompok
         $tugasKelompok->update([
-            'bobot' => $request->bobot,
-            'nilai' => $request->nilai,
-            'capaian_maksimal' => $request->capaian_maksimal,
-            'nilai_huruf' => $request->nilai_huruf,
+            'nilai' => $nilaiAkhir,
+            'nilai_huruf' => $nilaiHuruf,
+        ]);
+
+        // Hitung rata-rata nilai akhir untuk tugas ini sebagai capaian maksimal
+        $rataRata = TugasKelompok::where('id_tugas', $tugasKelompok->id_tugas)->avg('nilai');
+
+        // Update capaian maksimal untuk semua kelompok
+        TugasKelompok::where('id_tugas', $tugasKelompok->id_tugas)->update([
+            'capaian_maksimal' => $rataRata,
         ]);
 
         return redirect()->route('dosen.nilai.edit', $id)->with('success', 'Nilai berhasil diperbarui.');

@@ -34,6 +34,7 @@ class TugasController extends Controller
             'mulai' => 'required|date',
             'kumpul_sblm' => 'required|date',
             'file_tugas_dosen' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
+            'bobot' => 'required|numeric|min:0|max:100',
         ]);
 
         $dosen = Auth::user()->dosen;
@@ -52,6 +53,7 @@ class TugasController extends Controller
             'mulai' => $request->input('mulai'),
             'kumpul_sblm' => $request->input('kumpul_sblm'),
             'file_tugas_dosen' => $filePath,
+            'bobot' => $request->input('bobot'),
         ]);
 
         // Tambahkan tugas ke semua kelompok yang sudah ada

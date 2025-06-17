@@ -25,6 +25,7 @@ class CreateTugasTable extends Migration
             $table->date('mulai');
             $table->date('kumpul_sblm');
             $table->string('file_tugas_dosen')->nullable();
+            $table->decimal('bobot', 5, 2)->nullable();
         });
     }
 

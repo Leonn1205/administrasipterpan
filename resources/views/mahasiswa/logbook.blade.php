@@ -10,6 +10,7 @@
             background: #f7f7f7;
             margin: 0;
             padding: 0;
+            color: #222;
         }
 
         .sidebar {
@@ -18,8 +19,8 @@
             color: #fff;
             height: 100vh;
             position: fixed;
-            left: 0;
             top: 0;
+            left: 0;
             display: flex;
             flex-direction: column;
             padding-top: 30px;
@@ -28,12 +29,11 @@
         .sidebar .menu-title {
             font-size: 2rem;
             font-weight: bold;
-            margin-bottom: 40px;
             text-align: center;
+            margin-bottom: 40px;
         }
 
-        .sidebar a,
-        .sidebar button {
+        .sidebar a {
             display: block;
             background: #6e8b75;
             color: #fff;
@@ -44,20 +44,18 @@
             text-align: center;
             text-decoration: none;
             font-size: 1rem;
-            cursor: pointer;
             transition: background 0.2s;
         }
 
         .sidebar a.active,
-        .sidebar a:hover,
-        .sidebar button:hover {
+        .sidebar a:hover {
             background: #3de6e1;
             color: #222;
         }
 
         .main-content {
-            margin-left: 220px;
-            padding: 30px 40px;
+            margin-left: 240px;
+            padding: 40px;
         }
 
         .topbar {
@@ -81,17 +79,24 @@
             cursor: pointer;
         }
 
+        h2 {
+            margin-bottom: 20px;
+        }
+
         .tambah-btn {
             background: #3de6e1;
             color: #222;
             border: none;
             border-radius: 20px;
-            padding: 10px 30px;
-            font-size: 1rem;
+            padding: 10px 20px;
             font-weight: bold;
-            cursor: pointer;
-            float: right;
+            font-size: 1rem;
             margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .tambah-btn:hover {
+            background: #2bcac5;
         }
 
         table {
@@ -113,89 +118,78 @@
         }
 
         .action-btn {
+            padding: 6px 12px;
             background: #3de6e1;
             color: #222;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 18px;
-            margin: 0 5px;
             font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            margin: 2px;
             cursor: pointer;
         }
 
-        /* Modal */
+        .action-btn:hover {
+            background: #2bcac5;
+        }
+
+        /* Modal Style */
         .modal {
             display: none;
             position: fixed;
-            z-index: 10;
+            z-index: 9999;
             left: 0;
             top: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             align-items: center;
             justify-content: center;
-            overflow: auto;
         }
 
         .modal-content {
             background: #fff;
-            padding: 30px 40px;
-            border-radius: 10px;
-            min-width: 350px;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
             max-width: 500px;
-            width: 90vw;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
         }
 
         .modal-content label {
-            display: block;
-            margin-top: 15px;
-            margin-bottom: 5px;
             font-size: 14px;
+            margin-bottom: 5px;
+            display: block;
+            font-weight: 600;
         }
 
         .modal-content input,
         .modal-content textarea {
             width: 100%;
-            padding: 8px 10px;
-            margin-bottom: 10px;
-            border: 1px solid #222;
-            border-radius: 4px;
-        }
-
-        .modal-content textarea {
-            min-height: 60px;
+            padding: 10px;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
         }
 
         .modal-content button {
-            width: 100%;
-            margin-top: 15px;
-            padding: 10px 0;
             background: #3de6e1;
+            color: #222;
             border: none;
             border-radius: 20px;
-            color: #222;
-            font-size: 16px;
+            padding: 10px;
             font-weight: bold;
+            width: 100%;
+            font-size: 16px;
             cursor: pointer;
+            transition: background 0.3s;
         }
 
         .modal-content .close-btn {
-            background: #eee;
+            background: #ccc;
             color: #222;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
-
-        .alert-danger {
-            background: #f8d7da;
-            color: #842029;
-            border-radius: 8px;
-            padding: 10px 15px;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
     </style>
 </head>
@@ -206,8 +200,9 @@
         <a href="/mahasiswa/dashboard" class="{{ request()->is('mahasiswa/dashboard') ? 'active' : '' }}">Beranda</a>
         <a href="/mahasiswa/logbook" class="{{ request()->is('mahasiswa/logbook') ? 'active' : '' }}">Logbook</a>
         <a href="/mahasiswa/tugas" class="{{ request()->is('mahasiswa/tugas') ? 'active' : '' }}">Tugas</a>
-        <a href="/mahasiswa/nilai" class="{{ request()->is('mahasiswa/tugas') ? 'active' : '' }}">Nilai</a>
+        <a href="/mahasiswa/nilai" class="{{ request()->is('mahasiswa/nilai') ? 'active' : '' }}">Nilai</a>
     </div>
+
     <div class="main-content">
         <div class="topbar">
             <div class="welcome">Selamat Datang {{ Auth::user()->username ?? '' }}</div>
@@ -216,7 +211,10 @@
                 <button class="logout-btn" type="submit">Logout</button>
             </form>
         </div>
+
+        <h2>Logbook Mahasiswa</h2>
         <button class="tambah-btn" onclick="showModal('add')">Tambah</button>
+
         <table>
             <thead>
                 <tr>
@@ -258,7 +256,6 @@
         </table>
     </div>
 
-    <!-- Modal Tambah/Edit -->
     <div class="modal" id="modalLogbook">
         <div class="modal-content">
             <button class="close-btn" onclick="closeModal()">Tutup</button>
@@ -280,6 +277,7 @@
             </form>
         </div>
     </div>
+
     <script>
         function showModal(mode) {
             document.getElementById('modalLogbook').style.display = 'flex';

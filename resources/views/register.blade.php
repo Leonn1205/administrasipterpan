@@ -119,19 +119,25 @@
             <form method="POST" action="/register">
                 @csrf
                 <label for="nim">NIM</label>
-                <input type="text" id="nim" name="nim" value="{{ old('nim') }}" required>
+                <input type="text" id="nim" name="nim" placeholder="Masukkan NIM" value="{{ old('nim') }}"
+                    required autofocus>
 
                 <label for="username">USERNAME</label>
-                <input type="text" id="username" name="username" value="{{ old('username') }}" required autofocus>
+                <input type="text" id="username" name="username" placeholder="Masukkan username"
+                    value="{{ old('username') }}" required>
 
                 <label for="password">PASSWORD</label>
-                <input type="password" id="password" name="password" required minlength="8">
+                <div style="position: relative; width: 100%;">
+                    <input type="password" id="password" name="password" placeholder="Minimal 8 karakter" required
+                        minlength="8" style="padding-right: 40px;">
+                    <img src="{{ asset('icons/hide.svg') }}" id="toggleIcon" onclick="togglePassword()"
+                        alt="toggle password"
+                        style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; cursor: pointer;">
+                </div>
 
                 <label for="nama">NAMA</label>
-                <input type="text" id="nama" name="nama" value="{{ old('nama') }}" required>
-
-                <label for="no_telp">NO TELP</label>
-                <input type="text" id="no_telp" name="no_telp" value="{{ old('no_telp') }}">
+                <input type="text" id="nama" name="nama" placeholder="Masukkan nama lengkap"
+                    value="{{ old('nama') }}" required>
 
                 <div style="display: flex; align-items: flex-end; gap: 10px;">
                     <div style="flex:1;">

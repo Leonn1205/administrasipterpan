@@ -111,6 +111,9 @@
             <input type="file" id="file_tugas_dosen" name="file_tugas_dosen"
                 accept=".gif,.jpg,.png,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.zip,.pdf" required>
 
+            <label for="bobot">Bobot</label>
+            <input type="number" id="bobot" name="bobot" required>
+
             <button type="submit">Simpan Tugas</button>
         </form>
         <form method="GET" action="{{ route('dosen.tugas') }}">

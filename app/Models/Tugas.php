@@ -16,6 +16,7 @@ class Tugas extends Model
         'mulai',
         'kumpul_sblm',
         'file_tugas_dosen',
+        'bobot'
     ];
 
     // Relasi ke dosen pembuat tugas
@@ -32,7 +33,6 @@ class Tugas extends Model
                         'id',
                         'file_tugas_mhs',
                         'nilai',
-                        'bobot',
                         'capaian_maksimal',
                         'nilai_huruf',
                         'nim_pengumpul',

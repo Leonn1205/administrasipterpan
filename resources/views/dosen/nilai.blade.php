@@ -83,7 +83,8 @@
             background: #fff;
         }
 
-        th, td {
+        th,
+        td {
             border: 2px solid #222;
             padding: 12px 10px;
             text-align: center;
@@ -100,6 +101,19 @@
             font-weight: bold;
             color: #666;
             padding: 20px;
+        }
+
+        .detail-btn {
+            background: #3de6e1;
+            color: #222;
+            border: none;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
         }
     </style>
 </head>
@@ -139,7 +153,9 @@
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $entry->judul }}</td>
                         <td>{{ \Carbon\Carbon::parse($entry->kumpul_sblm)->format('d M Y') }}</td>
-                        <td><a href="{{ route('dosen.tugas.peserta', $entry->id_tugas) }}" class="detail-btn">Detail</a></td>
+                        <td><a href="{{ route('dosen.tugas.peserta', $entry->id_tugas) }}" class="detail-btn">Detail</a>
+                        </td>
+
 
                     </tr>
                 @empty
@@ -151,4 +167,5 @@
         </table>
     </div>
 </body>
+
 </html>

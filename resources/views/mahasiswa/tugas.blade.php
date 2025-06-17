@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
@@ -111,18 +111,38 @@
         .btn:hover {
             background: #2bcac5;
         }
+
+        .file-upload-btn {
+            background: #3de6e1;
+            color: #222;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .file-upload-btn:hover {
+            background: #2bcac5;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
+    <!-- Sidebar -->
     <div class="sidebar">
         <div class="menu-title">Menu</div>
         <a href="/mahasiswa/dashboard" class="{{ request()->is('mahasiswa/dashboard') ? 'active' : '' }}">Beranda</a>
         <a href="/mahasiswa/logbook" class="{{ request()->is('mahasiswa/logbook') ? 'active' : '' }}">Logbook</a>
         <a href="/mahasiswa/tugas" class="{{ request()->is('mahasiswa/tugas') ? 'active' : '' }}">Tugas</a>
-        <a href="/mahasiswa/nilai" class="{{ request()->is('mahasiswa/tugas') ? 'active' : '' }}">Nilai</a>
+        <a href="/mahasiswa/nilai" class="{{ request()->is('mahasiswa/nilai') ? 'active' : '' }}">Nilai</a>
     </div>
 
+    <!-- Main Content -->
     <div class="main-content">
         <div class="topbar">
             <div class="welcome">Selamat Datang {{ Auth::user()->username }}</div>
@@ -138,7 +158,6 @@
             <thead>
                 <tr>
                     <th>Judul</th>
-
                     <th>Deadline</th>
                     <th>File Tugas</th>
                     <th>Upload Jawaban</th>
@@ -148,24 +167,25 @@
                 @forelse ($tugasList as $tugas)
                     <tr>
                         <td>{{ $tugas->judul }}</td>
-
                         <td>{{ $tugas->kumpul_sblm }}</td>
                         <td>
                             <a class="btn" href="{{ asset('storage/' . $tugas->file_tugas_dosen) }}"
                                 download>Download</a>
                         </td>
                         <td>
-                           <form action="{{ route('mahasiswa.tugas.upload', $tugas->id_tugas) }}" method="POST" enctype="multipart/form-data">
-    @csrf
-    <input type="file" name="file_tugas_mhs" style="display: none;" onchange="this.form.submit()">
-    <button type="button" onclick="this.previousElementSibling.click()">Upload</button>
-</form>
-
+                            <form action="{{ route('mahasiswa.tugas.upload', $tugas->id_tugas) }}" method="POST"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <input type="file" name="file_tugas_mhs" id="file-{{ $tugas->id_tugas }}"
+                                    onchange="this.form.submit()">
+                                <button type="button" class="file-upload-btn"
+                                    onclick="document.getElementById('file-{{ $tugas->id_tugas }}').click()">Upload</button>
+                            </form>
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5">Belum ada tugas.</td>
+                        <td colspan="4">Belum ada tugas.</td>
                     </tr>
                 @endforelse
             </tbody>

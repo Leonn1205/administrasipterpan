@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <title>Tugas - Dosen Pembimbing</title>
@@ -11,7 +10,6 @@
             margin: 0;
             padding: 0;
         }
-
         .sidebar {
             width: 220px;
             background: #4d6651;
@@ -24,14 +22,12 @@
             flex-direction: column;
             padding-top: 30px;
         }
-
         .sidebar .menu-title {
             font-size: 2rem;
             font-weight: bold;
             text-align: center;
             margin-bottom: 40px;
         }
-
         .sidebar a {
             display: block;
             background: #6e8b75;
@@ -44,29 +40,24 @@
             font-size: 1rem;
             transition: background 0.2s;
         }
-
         .sidebar a.active,
         .sidebar a:hover {
             background: #3de6e1;
             color: #222;
         }
-
         .main-content {
             margin-left: 220px;
             padding: 30px 40px;
         }
-
         .topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
         }
-
         .topbar .welcome {
             font-size: 1.2rem;
         }
-
         .topbar .logout-btn {
             background: #3de6e1;
             color: #222;
@@ -76,13 +67,11 @@
             font-weight: bold;
             cursor: pointer;
         }
-
         .button-container {
             display: flex;
             justify-content: flex-end;
             margin-bottom: 20px;
         }
-
         .add-task-btn {
             background: #3de6e1;
             color: #222;
@@ -93,41 +82,29 @@
             font-weight: bold;
             cursor: pointer;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
             background: #fff;
         }
-
         th, td {
             border: 2px solid #222;
             padding: 12px 10px;
             text-align: center;
         }
-
         th {
             background: #f7f7f7;
             font-size: 1.1rem;
         }
-
-        .empty-message {
-            text-align: center;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #666;
-            padding: 20px;
-        }
     </style>
 </head>
-
 <body>
     <div class="sidebar">
         <div class="menu-title">Menu</div>
-            <a href="{{ route('dosen.dashboard') }}" class="{{ request()->is('dosen/dashboard') ? 'active' : '' }}">Daftar Kelompok</a>
-            <a href="{{ route('dosen.tugas') }}" class="{{ request()->is('dosen/tugas') ? 'active' : '' }}">Tugas</a>
-            <a href="{{ route('dosen.logbook') }}" class="{{ request()->is('dosen/logbook') ? 'active' : '' }}">Logbook Mahasiswa</a>
-            <a href="{{ route('dosen.nilai') }}" class="{{ request()->is('dosen/nilai') ? 'active' : '' }}">Nilai</a>
+        <a href="{{ route('dosen.dashboard') }}" class="{{ request()->is('dosen/dashboard') ? 'active' : '' }}">Daftar Kelompok</a>
+        <a href="{{ route('dosen.tugas') }}" class="{{ request()->is('dosen/tugas') ? 'active' : '' }}">Tugas</a>
+        <a href="{{ route('dosen.logbook') }}" class="{{ request()->is('dosen/logbook') ? 'active' : '' }}">Logbook Mahasiswa</a>
+        <a href="{{ route('dosen.nilai') }}" class="{{ request()->is('dosen/nilai') ? 'active' : '' }}">Nilai</a>
     </div>
 
     <div class="main-content">
@@ -144,28 +121,28 @@
         </div>
 
         @if(session('debug'))
-    <div class="alert-success">
-        Debugging: {{ session('debug') }}
-    </div>
-@endif
-    <table>
-        <thead>
-            <tr>
-                <th>No.</th>
-                <th>Judul</th>
-                <th>Tanggal Mulai</th>
-                <th>Kumpul Sebelum</th>
-                <th>Aktivitas</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse($tugas as $index => $tugasItem)
+            <div class="alert-success">Debugging: {{ session('debug') }}</div>
+        @endif
+
+        <table>
+            <thead>
                 <tr>
-                    <td>{{ $loop->iteration }}</td> <!-- Penomoran otomatis -->
-                    <td>{{ $tugasItem->judul }}</td>
-                    <td>{{ \Carbon\Carbon::parse($tugasItem->mulai)->format('d M Y') }}</td>
-                    <td>{{ \Carbon\Carbon::parse($tugasItem->kumpul_sblm)->format('d M Y') }}</td>
-                    <td>
+                    <th>No.</th>
+                    <th>Judul</th>
+                    <th>Tanggal Mulai</th>
+                    <th>Kumpul Sebelum</th>
+                    <th>File</th>
+                    <th>Bobot (%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($tugas as $tugasItem)
+                    <tr>
+                        <td>{{ $loop->iteration }}</td>
+                        <td>{{ $tugasItem->judul }}</td>
+                        <td>{{ \Carbon\Carbon::parse($tugasItem->mulai)->format('d M Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($tugasItem->kumpul_sblm)->format('d M Y') }}</td>
+                        <td>
                             @if($tugasItem->file_tugas_dosen)
                                 <a href="{{ route('dosen.tugas.download', $tugasItem->id_tugas) }}" target="_blank">
                                     {{ basename($tugasItem->file_tugas_dosen) }}
@@ -174,12 +151,15 @@
                                 Tidak ada file
                             @endif
                         </td>
-                </tr>
-            @empty
-                <tr>
-                    <td colspan="5" style="text-align:center;">Belum ada tugas</td>
-                </tr>
-            @endforelse
-        </tbody>
-    </table>
+                        <td>{{ $tugasItem->bobot }}%</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6">Belum ada tugas</td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</body>
 </html>

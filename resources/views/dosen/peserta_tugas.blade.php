@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Daftar Peserta Tugas</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 20px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
+            background-color: #fff;
         }
 
         th, td {
@@ -30,6 +39,7 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             z-index: 1000;
+            width: 300px;
         }
 
         .form-container h3 {
@@ -51,17 +61,34 @@
             border-radius: 5px;
         }
 
-        .form-container button {
+        button {
             padding: 10px 20px;
             background-color: #3de6e1;
+            color: #222;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
+            transition: background-color 0.2s;
+            margin-right: 10px;
         }
 
-        .form-container button:hover {
-            background-color: #ddd;
+        button:hover {
+            background-color: #29bdb8;
+        }
+
+        button.cancel-btn {
+            background-color: #f44336;
+            color: #fff;
+        }
+
+        button.cancel-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        .back-button {
+            margin-bottom: 20px;
+            display: inline-block;
         }
 
         .overlay {
@@ -76,6 +103,7 @@
         }
     </style>
 </head>
+
 <body>
     <button class="back-button" onclick="window.location.href='{{ route('dosen.nilai') }}'">Back</button>
     <h2>Peserta Tugas: {{ $tugas->judul }}</h2>
@@ -99,20 +127,24 @@
                         {{ $klp->mahasiswa2->nama ?? $klp->nim2 }}
                     </td>
                     <td>
-                        @if($klp->pivot->file_tugas_mhs)
+                        @if ($klp->pivot->file_tugas_mhs)
                             <a href="{{ asset('storage/' . $klp->pivot->file_tugas_mhs) }}" target="_blank">Download</a>
                         @else
                             Belum upload
                         @endif
                     </td>
                     <td>{{ $klp->pivot->nilai ?? '-' }}</td>
-                    <td>{{ $klp->pivot->bobot ?? '-' }}</td>
+                    <td>{{ $tugas->bobot ?? '-' }}</td>
                     <td>
-                        <button onclick="showForm('{{ $klp->pivot->id }}', '{{ $klp->mahasiswa1->nama ?? $klp->nim1 }} & {{ $klp->mahasiswa2->nama ?? $klp->nim2 }}')">Beri Nilai</button>
+                        <button onclick="showForm('{{ $klp->pivot->id }}', '{{ $klp->mahasiswa1->nama ?? $klp->nim1 }} & {{ $klp->mahasiswa2->nama ?? $klp->nim2 }}')">
+                            Beri Nilai
+                        </button>
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="6">Belum ada yang mengumpulkan</td></tr>
+                <tr>
+                    <td colspan="6">Belum ada yang mengumpulkan</td>
+                </tr>
             @endforelse
         </tbody>
     </table>
@@ -123,27 +155,29 @@
     <!-- Form Container -->
     <div class="form-container" id="form-container">
         <h3>Beri Nilai</h3>
-        <form method="POST" action="{{ route('dosen.tugas.nilai.update', $tugas->id_tugas) }}">
-    @csrf
-    <input type="hidden" name="id_kelompok" id="id_kelompok">
-    <label for="kelompok">Kelompok</label>
-    <input type="text" id="kelompok" readonly>
+        <form id="nilai-form" method="POST">
+            @csrf
+            <label for="kelompok">Kelompok</label>
+            <input type="text" id="kelompok" readonly>
 
-    <label for="bobot">Bobot</label>
-    <input type="number" id="bobot" name="bobot" required>
+            <label for="nilai">Nilai</label>
+            <input type="number" id="nilai" name="nilai" required>
 
-    <label for="nilai">Nilai</label>
-    <input type="number" id="nilai" name="nilai" required>
-
-    <button type="submit">Simpan</button>
-    <button type="button" onclick="hideForm()">Batal</button>
-</form>
+            <button type="submit">Simpan</button>
+            <button type="button" class="cancel-btn" onclick="hideForm()">Batal</button>
+        </form>
     </div>
 
     <script>
-        function showForm(idKelompok, kelompok) {
-            document.getElementById('id_kelompok').value = idKelompok;
-            document.getElementById('kelompok').value = kelompok;
+        function showForm(idTugasKelompok, kelompokNama) {
+            const form = document.getElementById('nilai-form');
+            const tugasId = "{{ $tugas->id_tugas }}";
+            const route = `/dosen/tugas/${tugasId}/nilai/${idTugasKelompok}/simpan`;
+
+            form.action = route;
+            document.getElementById('kelompok').value = kelompokNama;
+            document.getElementById('nilai').value = '';
+
             document.getElementById('form-container').style.display = 'block';
             document.getElementById('overlay').style.display = 'block';
         }
@@ -154,4 +188,5 @@
         }
     </script>
 </body>
+
 </html>

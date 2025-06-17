@@ -31,7 +31,6 @@ class CreateTugasKelompokTable extends Migration
             $table->char('nim_pengumpul', 8)->nullable();
             $table->timestamp('waktu_kumpul')->nullable();
             $table->decimal('nilai')->nullable();
-            $table->decimal('bobot', 5, 2)->nullable();
             $table->decimal('capaian_maksimal')->nullable();
             $table->string('nilai_huruf', 5)->nullable();
         });

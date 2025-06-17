@@ -1,132 +1,141 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Nilai Mahasiswa</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            background: #f7f7f7;
             margin: 0;
             padding: 0;
-            background-color: #f7f7f7;
         }
 
         .sidebar {
-            width: 20%;
+            width: 220px;
+            background: #4d6651;
+            color: #fff;
             height: 100vh;
-            background-color: #3de6e1;
             position: fixed;
-            top: 0;
             left: 0;
-            padding: 20px;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            padding-top: 30px;
         }
 
-        .sidebar h2 {
-            color: #222;
+        .sidebar .menu-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 40px;
             text-align: center;
-            margin-bottom: 20px;
         }
 
         .sidebar a {
             display: block;
-            color: #222;
-            text-decoration: none;
-            margin: 10px 0;
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
+            background: #6e8b75;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            margin: 10px 20px;
+            padding: 12px 0;
             text-align: center;
-            font-weight: bold;
+            text-decoration: none;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
         }
 
+        .sidebar a.active,
         .sidebar a:hover {
-            background-color: #ddd;
+            background: #3de6e1;
+            color: #222;
         }
 
         .main-content {
-            margin-left: 20%;
-            padding: 20px;
+            margin-left: 220px;
+            padding: 30px 40px;
         }
 
-        .header {
+        .topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #fff;
-            padding: 10px 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
 
-        .header h1 {
-            font-size: 20px;
+        .topbar .welcome {
+            font-size: 1.2rem;
+        }
+
+        .topbar .logout-btn {
+            background: #3de6e1;
             color: #222;
-        }
-
-        .header button {
-            background-color: #3de6e1;
             border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            color: #222;
+            border-radius: 12px;
+            padding: 6px 18px;
             font-weight: bold;
             cursor: pointer;
-        }
-
-        .header button:hover {
-            background-color: #ddd;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            background: #fff;
         }
 
-        th, td {
-            border: 1px solid #ccc;
-            padding: 10px;
+        th,
+        td {
+            border: 2px solid #222;
+            padding: 12px 10px;
             text-align: center;
         }
 
         th {
-            background-color: #3de6e1;
-            color: #222;
+            background: #f7f7f7;
+            font-size: 1.1rem;
         }
 
         .summary {
-            margin-top: 20px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 5px;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
         }
 
         .summary p {
-            margin: 5px 0;
             font-weight: bold;
+            font-size: 1rem;
+            margin: 8px 0;
         }
     </style>
 </head>
+
 <body>
+
     <!-- Sidebar -->
     <div class="sidebar">
         <div class="menu-title">Menu</div>
         <a href="/mahasiswa/dashboard" class="{{ request()->is('mahasiswa/dashboard') ? 'active' : '' }}">Beranda</a>
         <a href="/mahasiswa/logbook" class="{{ request()->is('mahasiswa/logbook') ? 'active' : '' }}">Logbook</a>
         <a href="/mahasiswa/tugas" class="{{ request()->is('mahasiswa/tugas') ? 'active' : '' }}">Tugas</a>
-        <a href="/mahasiswa/nilai" class="{{ request()->is('mahasiswa/tugas') ? 'active' : '' }}">Nilai</a>
+        <a href="/mahasiswa/nilai" class="{{ request()->is('mahasiswa/nilai') ? 'active' : '' }}">Nilai</a>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Header -->
-        <div class="header">
-            <h1>Selamat Datang {{ Auth::user()->mahasiswa->nama_mhs }}</h1>
-            <button onclick="location.href='/logout'">Logout</button>
+        <!-- Topbar -->
+        <div class="topbar">
+            <div class="welcome">Selamat Datang {{ Auth::user()->mahasiswa->nama_mhs ?? '' }}</div>
+            <form method="POST" action="/logout" style="margin:0;">
+                @csrf
+                <button class="logout-btn" type="submit">Logout</button>
+            </form>
         </div>
 
-        <!-- Table -->
+        <!-- Tabel Nilai -->
         <table>
             <thead>
                 <tr>
@@ -142,7 +151,7 @@
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $item->tugas->judul }}</td>
                         <td>{{ $item->nilai ?? 'Belum ada Nilai' }}</td>
-                        <td>{{ $item->bobot ?? '-' }}%</td>
+                        <td>{{ $item->tugas ->bobot ?? '-' }}%</td>
                     </tr>
                 @empty
                     <tr>
@@ -152,11 +161,12 @@
             </tbody>
         </table>
 
-        <!-- Summary -->
+        <!-- Ringkasan -->
         <div class="summary">
             <p>Capaian Maksimal: {{ $capaianMaksimal ?? '-' }}</p>
-            <p>Huruf: {{ $nilaiHuruf ?? '-' }}</p>
+            <p>Nilai Huruf: {{ $nilaiHuruf ?? '-' }}</p>
         </div>
     </div>
 </body>
+
 </html>

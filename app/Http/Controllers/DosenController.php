@@ -96,16 +96,17 @@ class DosenController extends Controller
         return redirect()->back()->with('success', 'Tugas berhasil ditambahkan dan ditautkan ke semua kelompok.');
     }
 
-    public function simpanNilai(Request $request, $id)
+    public function simpanNilai(Request $request, $id, $id_tugas_kelompok)
     {
+        // Validasi input
         $request->validate([
             'nilai' => 'required|numeric|min:0|max:100',
-            'bobot' => 'required|numeric|min:0|max:100',
         ]);
 
-        $tugasKelompok = TugasKelompok::findOrFail($id);
+        // Temukan record tugas_kelompok
+        $tugasKelompok = TugasKelompok::findOrFail($id_tugas_kelompok);
 
-        // Hitung nilai huruf berdasarkan nilai angka
+        // Hitung nilai huruf
         $nilaiAngka = $request->nilai;
         if ($nilaiAngka >= 85) {
             $nilaiHuruf = 'A';
@@ -119,23 +120,37 @@ class DosenController extends Controller
             $nilaiHuruf = 'E';
         }
 
-        // Update nilai untuk kelompok saat ini
+        // Ambil bobot dari tabel tugas (jika ada kolom 'bobot' di tabel tugas)
+        $tugas = Tugas::find($tugasKelompok->id_tugas);
+        $bobot = $tugas ? $tugas->bobot : null;
+
+        // Hitung rata-rata nilai semua kelompok pada tugas ini
+        $rataRataNilai = TugasKelompok::where('id_tugas', $tugasKelompok->id_tugas)->avg('nilai');
+
+        // Update baris tugas_kelompok yang sedang dinilai
         $tugasKelompok->update([
             'nilai' => $nilaiAngka,
-            'bobot' => $request->bobot,
+            'bobot' => $bobot,
             'nilai_huruf' => $nilaiHuruf,
-        ]);
-
-        // Hitung rata-rata nilai semua kelompok untuk tugas ini
-        $rataRataNilai = TugasKelompok::where('id_tugas', $tugasKelompok->id_tugas)
-            ->avg('nilai');
-
-        // Update capaian maksimal di tabel tugas
-        DB::table('tugas')->where('id', $tugasKelompok->id_tugas)->update([
             'capaian_maksimal' => $rataRataNilai,
         ]);
 
-        return redirect()->route('dosen.detail-tugas', $tugasKelompok->id_tugas)
-                        ->with('success', 'Nilai berhasil disimpan dan capaian maksimal diperbarui.');
+        return redirect()
+            ->route('dosen.peserta_tugas', $tugasKelompok->id_tugas)
+            ->with('success', 'Nilai berhasil disimpan dan capaian maksimal diperbarui.');
     }
+
+    public function showPesertaTugas($id)
+    {
+        // Ambil tugas
+        $tugas = Tugas::findOrFail($id);
+
+        // Ambil semua kelompok yang menerima tugas ini beserta data relasinya
+        $tugasKelompok = TugasKelompok::where('id_tugas', $id)
+            ->with(['kelompok.mahasiswa1', 'kelompok.mahasiswa2'])
+            ->get();
+
+        return view('dosen.peserta_tugas', compact('tugas', 'tugasKelompok'));
+    }
+
 }

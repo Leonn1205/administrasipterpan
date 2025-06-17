@@ -17,7 +17,6 @@ class TugasKelompok extends Model
         'id_klp',
         'file_tugas_mhs',
         'nilai',
-        'bobot',
         'capaian_maksimal',
         'nilai_huruf',
         'nim_pengumpul'

@@ -85,7 +85,6 @@ class MahasiswaController extends Controller
             DB::table('tugas_kelompok')->insert([
                 'id_klp' => $kelompok->id_klp,
                 'id_tugas' => $tugas->id_tugas,
-                'status' => 'belum mengumpulkan',
                 'file' => null,
                 'waktu_kumpul' => null,
                 'created_at' => now(),
@@ -206,8 +205,24 @@ class MahasiswaController extends Controller
 
     public function nilai()
     {
-        $tugasKelompok = TugasKelompok::with('tugas')->where('nim_pengumpul', Auth::user()->mahasiswa->nim)->get();
-        $capaianMaksimal = TugasKelompok::avg('nilai');
+        $mahasiswa = Auth::user()->mahasiswa;
+
+        // Ambil kelompok mahasiswa
+        $kelompok = $mahasiswa->kelompok;
+
+        if (!$kelompok) {
+            return redirect()->back()->with('error', 'Anda belum tergabung dalam kelompok.');
+        }
+
+        // Ambil tugas berdasarkan ID kelompok
+        $tugasKelompok = TugasKelompok::with('tugas')
+            ->where('id_klp', $kelompok->id_klp)
+            ->get();
+
+        // Hitung capaian maksimal
+        $capaianMaksimal = TugasKelompok::where('id_klp', $kelompok->id_klp)->avg('nilai');
+
+        // Hitung nilai huruf berdasarkan capaian maksimal
         $nilaiHuruf = $this->calculateHuruf($capaianMaksimal);
 
         return view('mahasiswa.nilai', compact('tugasKelompok', 'capaianMaksimal', 'nilaiHuruf'));

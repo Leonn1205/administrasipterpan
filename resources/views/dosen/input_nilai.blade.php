@@ -83,9 +83,6 @@
         <form method="POST" action="{{ route('dosen.nilai.update', $tugasKelompok->id) }}">
             @csrf
 
-            <label for="bobot">Bobot</label>
-            <input type="number" id="bobot" name="bobot" value="{{ $tugasKelompok->bobot }}" required>
-
             <label for="nilai">Nilai</label>
             <input type="number" id="nilai" name="nilai" value="{{ $tugasKelompok->nilai }}" required>
 

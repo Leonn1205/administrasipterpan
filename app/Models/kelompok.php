@@ -32,6 +32,6 @@ class Kelompok extends Model
     public function tugas()
     {
         return $this->belongsToMany(Tugas::class, 'tugas_kelompok', 'id_klp', 'id_tugas')
-                    ->withPivot('file_tugas_mhs', 'nilai', 'nilai_huruf', 'bobot', 'capaian_maksimal', 'nim_pengumpul');
+                    ->withPivot('file_tugas_mhs', 'nilai', 'nilai_huruf', 'capaian_maksimal', 'nim_pengumpul');
     }
 }

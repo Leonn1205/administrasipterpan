@@ -160,9 +160,9 @@
                     <tr>
                         <td>{{ $item->mahasiswa->nim ?? '-' }}</td>
                         <td>{{ $item->mahasiswa->nama_mhs ?? '-' }}</td>
-                         
+
                         <td>
-                            <a href="{{ route('dosen.logbook.detail', ['nim' => $item->nim]) }}">
+                            <a href="{{ route('dosen.logbook.detail', ['nim' => $item->nim]) }}" class="detail-btn">
                                 Lihat Detail
                             </a>
                         </td>

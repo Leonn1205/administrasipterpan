@@ -131,5 +131,29 @@ class UserSeeder extends Seeder
             'status_mengulang' => 'mengulang',
             'dosen_sebelum' => 'Wilson Nasumi Mili, S.Kom., M.T.'
         ]);
+
+        $mahasiswa = User::create([
+            'username' => 'Michael Jonathan',
+            'password' => Hash::make('mj123456'),
+            'role'     => 'mahasiswa'
+        ]);
+        Mahasiswa::create([
+            'id_user' => $mahasiswa->id_user,
+            'nama_mhs' => 'Michawel Jonathan Anwar',
+            'nim' => '72220535',
+            'status_mengulang' => 'tidak_mengulang',
+        ]);
+
+        $mahasiswa = User::create([
+            'username' => 'Dex Bennet',
+            'password' => Hash::make('dex12345'),
+            'role'     => 'mahasiswa'
+        ]);
+        Mahasiswa::create([
+            'id_user' => $mahasiswa->id_user,
+            'nama_mhs' => 'Dex Bennet',
+            'nim' => '72220536',
+            'status_mengulang' => 'tidak_mengulang',
+        ]);
     }
 }
