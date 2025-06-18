@@ -35,7 +35,8 @@
         input[type="text"],
         input[type="date"],
         textarea,
-        input[type="file"] {
+        input[type="file"],
+        input[type="number"] {
             width: 100%;
             padding: 8px;
             margin-top: 5px;
@@ -64,6 +65,22 @@
             margin-bottom: 15px;
             text-align: center;
             font-weight: bold;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #f5c6cb;
+            font-weight: bold;
+        }
+
+        ul.error-list {
+            margin: 0;
+            padding-left: 20px;
         }
     </style>
 </head>
@@ -71,29 +88,39 @@
 <body>
     <div class="container">
         <h2>Tambah Tugas</h2>
+
+        {{-- ALERT ERROR VALIDASI --}}
         @if ($errors->any())
-            <div class="alert-danger">
-                <ul>
+            <div class="alert-error">
+                <strong>Terjadi kesalahan:</strong>
+                <ul class="error-list">
                     @foreach ($errors->all() as $error)
-                        <li style="color:red">{{ $error }}</li>
+                        <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
         @endif
 
-
-        @if (session()->has('success'))
+        {{-- ALERT SUKSES --}}
+        @if (session('success'))
             <div class="alert-success">
                 {{ session('success') }}
             </div>
         @endif
 
-        @if (session()->has('debug'))
-            <div class="alert-success">
-                Debugging: {{ session('debug') }}
+        {{-- ALERT ERROR UMUM --}}
+        @if (session('error'))
+            <div class="alert-error">
+                {{ session('error') }}
             </div>
         @endif
 
+        {{-- ALERT DEBUG (opsional) --}}
+        @if (session('debug'))
+            <div class="alert-success">
+                Debug: {{ session('debug') }}
+            </div>
+        @endif
 
         <form method="POST" action="{{ route('dosen.tugas.store') }}" enctype="multipart/form-data">
             @csrf
@@ -116,6 +143,7 @@
 
             <button type="submit">Simpan Tugas</button>
         </form>
+
         <form method="GET" action="{{ route('dosen.tugas') }}">
             <button type="submit" class="back-button">Kembali</button>
         </form>

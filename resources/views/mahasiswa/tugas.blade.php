@@ -154,6 +154,27 @@
 
         <h2 style="margin-bottom: 20px;">Daftar Tugas dari Dosen</h2>
 
+        @if (session('success'))
+            <div
+                style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #c3e6cb;">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div
+                style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #f5c6cb;">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if (session('debug'))
+            <div
+                style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #ffeeba;">
+                Debugging: {{ session('debug') }}
+            </div>
+        @endif
+
         <table>
             <thead>
                 <tr>

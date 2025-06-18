@@ -18,7 +18,8 @@
             background-color: #fff;
         }
 
-        th, td {
+        th,
+        td {
             border: 1px solid #ccc;
             padding: 8px;
             text-align: center;
@@ -105,6 +106,20 @@
 </head>
 
 <body>
+    @if (session('success'))
+        <div
+            style="background-color: #d4edda; color: #155724; padding: 12px; border: 1px solid #c3e6cb; border-radius: 5px; margin-bottom: 20px;">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div
+            style="background-color: #f8d7da; color: #721c24; padding: 12px; border: 1px solid #f5c6cb; border-radius: 5px; margin-bottom: 20px;">
+            {{ session('error') }}
+        </div>
+    @endif
+
     <button class="back-button" onclick="window.location.href='{{ route('dosen.nilai') }}'">Back</button>
     <h2>Peserta Tugas: {{ $tugas->judul }}</h2>
     <table>
@@ -136,7 +151,8 @@
                     <td>{{ $klp->pivot->nilai ?? '-' }}</td>
                     <td>{{ $tugas->bobot ?? '-' }}</td>
                     <td>
-                        <button onclick="showForm('{{ $klp->pivot->id }}', '{{ $klp->mahasiswa1->nama ?? $klp->nim1 }} & {{ $klp->mahasiswa2->nama ?? $klp->nim2 }}')">
+                        <button
+                            onclick="showForm('{{ $klp->pivot->id }}', '{{ $klp->mahasiswa1->nama ?? $klp->nim1 }} & {{ $klp->mahasiswa2->nama ?? $klp->nim2 }}')">
                             Beri Nilai
                         </button>
                     </td>

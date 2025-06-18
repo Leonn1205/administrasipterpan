@@ -182,6 +182,14 @@
             padding: 10px 15px;
             margin-bottom: 15px;
         }
+
+        .alert-success {
+            background: #d1e7dd;
+            color: #0f5132;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 
@@ -204,6 +212,12 @@
         @if (!$sudahPunyaKelompok)
             <button class="buat-kelompok-btn" onclick="showModal()">Buat Kelompok</button>
         @endif
+        @if (session('success'))
+            <div class="alert-success" id="success-alert">
+                {{ session('success') }}
+            </div>
+        @endif
+
         <table>
             <thead>
                 <tr>

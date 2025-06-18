@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <title>Tugas - Dosen Pembimbing</title>
@@ -10,6 +11,7 @@
             margin: 0;
             padding: 0;
         }
+
         .sidebar {
             width: 220px;
             background: #4d6651;
@@ -22,12 +24,14 @@
             flex-direction: column;
             padding-top: 30px;
         }
+
         .sidebar .menu-title {
             font-size: 2rem;
             font-weight: bold;
             text-align: center;
             margin-bottom: 40px;
         }
+
         .sidebar a {
             display: block;
             background: #6e8b75;
@@ -40,24 +44,29 @@
             font-size: 1rem;
             transition: background 0.2s;
         }
+
         .sidebar a.active,
         .sidebar a:hover {
             background: #3de6e1;
             color: #222;
         }
+
         .main-content {
             margin-left: 220px;
             padding: 30px 40px;
         }
+
         .topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
         }
+
         .topbar .welcome {
             font-size: 1.2rem;
         }
+
         .topbar .logout-btn {
             background: #3de6e1;
             color: #222;
@@ -67,11 +76,13 @@
             font-weight: bold;
             cursor: pointer;
         }
+
         .button-container {
             display: flex;
             justify-content: flex-end;
             margin-bottom: 20px;
         }
+
         .add-task-btn {
             background: #3de6e1;
             color: #222;
@@ -82,28 +93,35 @@
             font-weight: bold;
             cursor: pointer;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             background: #fff;
         }
-        th, td {
+
+        th,
+        td {
             border: 2px solid #222;
             padding: 12px 10px;
             text-align: center;
         }
+
         th {
             background: #f7f7f7;
             font-size: 1.1rem;
         }
     </style>
 </head>
+
 <body>
     <div class="sidebar">
         <div class="menu-title">Menu</div>
-        <a href="{{ route('dosen.dashboard') }}" class="{{ request()->is('dosen/dashboard') ? 'active' : '' }}">Daftar Kelompok</a>
+        <a href="{{ route('dosen.dashboard') }}" class="{{ request()->is('dosen/dashboard') ? 'active' : '' }}">Daftar
+            Kelompok</a>
         <a href="{{ route('dosen.tugas') }}" class="{{ request()->is('dosen/tugas') ? 'active' : '' }}">Tugas</a>
-        <a href="{{ route('dosen.logbook') }}" class="{{ request()->is('dosen/logbook') ? 'active' : '' }}">Logbook Mahasiswa</a>
+        <a href="{{ route('dosen.logbook') }}" class="{{ request()->is('dosen/logbook') ? 'active' : '' }}">Logbook
+            Mahasiswa</a>
         <a href="{{ route('dosen.nilai') }}" class="{{ request()->is('dosen/nilai') ? 'active' : '' }}">Nilai</a>
     </div>
 
@@ -117,13 +135,34 @@
         </div>
 
         <div class="button-container">
-            <button class="add-task-btn" onclick="window.location.href='{{ route('dosen.tugas.create') }}'">+ Tambah Tugas</button>
+            <button class="add-task-btn" onclick="window.location.href='{{ route('dosen.tugas.create') }}'">+ Tambah
+                Tugas</button>
         </div>
 
-        @if(session('debug'))
+        @if (session('debug'))
             <div class="alert-success">Debugging: {{ session('debug') }}</div>
         @endif
 
+        @if (session('success'))
+            <div
+                style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #c3e6cb;">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div
+                style="background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #f5c6cb;">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if (session('debug'))
+            <div
+                style="background: #fff3cd; color: #856404; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #ffeeba;">
+                Debugging: {{ session('debug') }}
+            </div>
+        @endif
         <table>
             <thead>
                 <tr>
@@ -143,7 +182,7 @@
                         <td>{{ \Carbon\Carbon::parse($tugasItem->mulai)->format('d M Y') }}</td>
                         <td>{{ \Carbon\Carbon::parse($tugasItem->kumpul_sblm)->format('d M Y') }}</td>
                         <td>
-                            @if($tugasItem->file_tugas_dosen)
+                            @if ($tugasItem->file_tugas_dosen)
                                 <a href="{{ route('dosen.tugas.download', $tugasItem->id_tugas) }}" target="_blank">
                                     {{ basename($tugasItem->file_tugas_dosen) }}
                                 </a>
@@ -162,4 +201,5 @@
         </table>
     </div>
 </body>
+
 </html>
